@@ -1,0 +1,64 @@
+-- khách hàng mới
+
+select `Name of customer` , sum(Sales) as sale, Employee
+from tsales t 
+where `Date` >= '2023-05-01' and `Date` <= '2023-05-31'
+        and `Name of customer` 
+        not in (
+        select `Name of customer` 
+        from tsales t2 
+        where `Date` <= '2023-04-30')
+        group by `Name of customer` 
+ -- số khach hàng
+
+ select count(distinct(`Name of customer`))
+from tsales t3 
+where date between "2023-06-01" and "2023-06-30"
+--RFM
+
+select *, 
+      concat(R_Score,F_Score,M_Score) as RFM_Score
+ from (
+       select *, 
+              ntile (4) over (order by Recency) as R_Score,
+              ntile (4) over (order by Frequency) as F_Score,
+              ntile (4) over (order by Monetary) as M_Score
+       from(
+                  select `Date` , `Name of customer` ,
+                         DATEDIFF('2023-06-30',MAX(`Date`)) as Recency,
+                         count(`Number invoice`)/ datediff('2023-06-30','2021-01-01') as Frequency,
+                         ROUND(avg(Sales),0) as Monetary
+                    from tsales t
+                    group by `Name of customer` ) A) B
+
+ --khách hàng và nhân viên tháng 6
+
+ select `Name of customer` , sum(Sales) as sales , Employee 
+from tsales t2 
+where `Date` between '2023-06-01' and '2023-06-30'
+group by Employee, `Name of customer` 
+order by Sales desc 
+select distinct `Name of customer` 
+from tsales t4 
+where `Date` between '2023-06-01' and '2023-06-30'
+ select `Date` from tsales t5 
+
+ --RFM SẢN PHẨM
+
+ select *, 
+          concat(R_Score,F_Score,M_Score) as RFM_Score
+from(
+ select *,
+        ntile (4) over (order by Recency) as R_Score,
+              ntile (4) over (order by Frequency) as F_Score,
+              ntile (4) over (order by Monetary) as M_Score
+from(
+ select `Date` , `Product code` ,
+		DATEDIFF('2023-06-30',MAX(`Date`)) as Recency,
+        count(`Number invoice`)/ datediff('2023-06-30','2021-01-01') as Frequency,
+        ROUND(avg(Sales),0) as Monetary
+ from tsales t6 
+ group by `Product code` ) A) B
+ ---
+ 
+ 
